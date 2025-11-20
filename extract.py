@@ -54,7 +54,14 @@ def fetch_channel_messages_with_threads(channel_id, limit=100):
     return all_messages
 
 #export messages to csv
-def save_messages_to_csv(messages, filename="chat_history.csv"):
+def save_messages_to_csv(messages, output_dir="output"):
+    os.makedirs(output_dir, exist_ok=True)
+
+    channel_info = client.conversations_info(channel=CHANNEL_ID)
+    channel_name = channel_info["channel"]["name"]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = os.path.join(output_dir, f"chat_history_{channel_name}.csv")
+
     # utf-8-sigを使用することで、Excelでも文字化けせずに開ける
     # AIに読み込ませる際も問題なく動作します
     with open(filename, "w", newline="", encoding="utf-8-sig") as f:
