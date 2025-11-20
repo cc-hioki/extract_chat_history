@@ -14,23 +14,7 @@ SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 #Channel ID
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 
-# デバッグ: チャンネルIDを確認
-print(f"読み込まれたCHANNEL_ID: {CHANNEL_ID}")
-
-if not CHANNEL_ID:
-    print("エラー: CHANNEL_IDが設定されていません。.envファイルを確認してください。")
-    exit(1)
-
 client = WebClient(token=SLACK_BOT_TOKEN)
-
-# デバッグ: チャンネル情報を取得して確認
-try:
-    channel_info = client.conversations_info(channel=CHANNEL_ID)
-    channel_name = channel_info.get("channel", {}).get("name", "不明")
-    print(f"取得対象チャンネル: #{channel_name} (ID: {CHANNEL_ID})")
-except SlackApiError as e:
-    print(f"警告: チャンネル情報の取得に失敗しました: {e.response['error']}")
-    print(f"使用中のCHANNEL_ID: {CHANNEL_ID}")
 
 #main function
 def fetch_channel_messages_with_threads(channel_id, limit=100):
@@ -69,6 +53,7 @@ def fetch_channel_messages_with_threads(channel_id, limit=100):
     
     return all_messages
 
+#export messages to csv
 def save_messages_to_csv(messages, filename="chat_history.csv"):
     # utf-8-sigを使用することで、Excelでも文字化けせずに開ける
     # AIに読み込ませる際も問題なく動作します
